@@ -63,9 +63,27 @@ orapki wallet create -wallet <wallet_path> -pwd <wallet_pwd> -auto_login
 orapki wallet add -wallet <wallet_path> -trusted_cert -cert <cert_file_name> -pwd <wallet_pwd>
 mkstore -wrl <wallet_path> -createCredential <cred_name> <REST_username>
 ```
-> orapki wallet create -wallet /acfs01/wallet/exa01vm02 -pwd We1come\$ -auto_login  
+> orapki wallet create -wallet /acfs01/wallet/exa01vm02 -pwd We1come4 -auto_login  
+> Oracle PKI Tool Release 18.0.0.0.0 - Production  
+> Version 18.1.0.0.0  
+> Copyright (c) 2004, 2017, Oracle and/or its affiliates. All rights reserved.  
+>  
+>Operation is successfully completed.  
 > orapki wallet add -wallet /acfs01/wallet/exa01vm02 -trusted_cert -cert ./d473bbbc02425f5fbfc42872637e7aa0.pem -pwd We1come4  
-> mkstore -wrl /acfs01/wallet/exa01vm02 -createCredential exa01vm02 resttest
+> Oracle PKI Tool Release 18.0.0.0.0 - Production  
+> Version 18.1.0.0.0  
+> Copyright (c) 2004, 2017, Oracle and/or its affiliates. All rights reserved.  
+>  
+>Operation is successfully completed.  
+> mkstore -wrl /acfs01/wallet/exa01vm02 -createCredential exa01vm02 resttest  
+> Oracle Secret Store Tool Release 18.0.0.0.0 - Production  
+> Version 18.1.0.0.0  
+> Copyright (c) 2004, 2017, Oracle and/or its affiliates. All rights reserved.  
+>  
+> Your secret/Password is missing in the command line  
+> Enter your secret/Password:    
+> Re-enter your secret/Password:    
+> Enter wallet password:  
 4.2 create ACL
 ```
 BEGIN
@@ -110,7 +128,7 @@ END;
 >     wallet_path =>'file:/acfs01/wallet/exa01vm02');  
 >   commit;  
 > END;  
-> /
+> /  
 4.3 create rest_demo function
 ```
   @rest_demo.pls
