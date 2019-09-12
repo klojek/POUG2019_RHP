@@ -35,5 +35,85 @@ rhpctl delete rhpserver #if it was installed in local mode
 rhpctl add rhpserver -diskgroup <diskgroup> -storage <rhp_acfs_path> 
 srvctl start rhpserver #włączenie rhpserver
 ```
+3.3 enable REST
+```
+rhpctl register user -restuser -user <REST_username> -email <email_notification> -rhpuser <GI_owner>
+srvctl stop rhpserver
+srvctl modify rhpserver -enableHTTPS YES
+srvctl start rhpserver
+```
+3.4 verify REST
+```
+crskeytoolctl -printrootcert
+```
+> [grid@exa01vm02 ~]$ crskeytoolctl -printrootcert  
+> Cluster root public certificate printed to file [/home/grid/b441af55ae504f74ffe6274d65e0d979.pem].
+```
+export CURL_CA_BUNDLE=<cert_file_name>
+curl -u <REST_username> https://<REST_SERVER_NAME>:8894/rhp-restapi/rhp/workingcopies
+```
+> [grid@exa01vm02 ~]$ curl -u resttest https://exa01vm02:8894/rhp-restapi/rhp/workingcopies  
+> Enter host password for user 'resttest':  
+> {"items":[]}
 
+4. configure database
+4.1 create wallet
+```
+orapki wallet create -wallet <wallet_path> -pwd <wallet_pwd> -auto_login
+orapki wallet add -wallet <wallet_path> -trusted_cert -cert <cert_file_name> -pwd <wallet_pwd>
+mkstore -wrl <wallet_path> -createCredential <cred_name> <REST_username>
+```
+> orapki wallet create -wallet /acfs01/wallet/exa01vm02 -pwd We1come\$ -auto_login  
+> orapki wallet add -wallet /acfs01/wallet/exa01vm02 -trusted_cert -cert ./d473bbbc02425f5fbfc42872637e7aa0.pem -pwd We1come4  
+> mkstore -wrl /acfs01/wallet/exa01vm02 -createCredential exa01vm02 resttest
+4.2 create ACL
+```
+BEGIN
+  DBMS_NETWORK_ACL_ADMIN.create_acl(
+    acl => <name>, 
+    description=> <description>,
+    principal => <DB_USER>, 
+    is_grant => TRUE, 
+    privilege => 'connect'); 
+  DBMS_NETWORK_ACL_ADMIN.ADD_PRIVILEGE(
+    acl => <name>,
+    principal => <DB_USER>, 
+    is_grant => TRUE, 
+    privilege => 'use-passwords'); 
+  DBMS_NETWORK_ACL_ADMIN.assign_acl(
+    acl => <name>, 
+    host => <RHP_server>); 
+  DBMS_NETWORK_ACL_ADMIN.ASSIGN_WALLET_acl(
+    acl => <name>, 
+    wallet_path =>'file:<wallet_path>'); 
+  commit;
+END; 
+/
+```
+> BEGIN  
+>   DBMS_NETWORK_ACL_ADMIN.create_acl(  
+>     acl => 'RHP_TEST.xml',  
+>     description=> 'RHP TEST',  
+>     principal => 'REST_DEMO',  
+>     is_grant => TRUE,  
+>     privilege => 'connect');  
+>   DBMS_NETWORK_ACL_ADMIN.ADD_PRIVILEGE(  
+>     acl => 'RHP_TEST.xml',  
+>     principal => 'REST_DEMO',   
+>     is_grant => TRUE,   
+>     privilege => 'use-passwords');  
+>   DBMS_NETWORK_ACL_ADMIN.assign_acl(  
+>     acl => 'RHP_TEST.xml',  
+>     host => '*');  
+>   DBMS_NETWORK_ACL_ADMIN.ASSIGN_WALLET_acl(  
+>     acl => 'RHP_TEST.xml',  
+>     wallet_path =>'file:/acfs01/wallet/exa01vm02');  
+>   commit;  
+> END;  
+> /
+4.3 create rest_demo function
+```
+  @rest_demo.pls
+```
+4.4 play with select statements
 
