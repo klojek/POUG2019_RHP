@@ -1,4 +1,5 @@
 # POUG2019_RHP
+Simple demo project created for POUG Conference
 
 ## Files:
 ```
