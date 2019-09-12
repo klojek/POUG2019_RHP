@@ -60,9 +60,9 @@ curl -u <REST_username> https://<REST_SERVER_NAME>:8894/rhp-restapi/rhp/workingc
 4. configure database
 4.1 create wallet
 ```
-orapki wallet create -wallet <wallet_path> -pwd <wallet_pwd> -auto_login
-orapki wallet add -wallet <wallet_path> -trusted_cert -cert <cert_file_name> -pwd <wallet_pwd>
-mkstore -wrl <wallet_path> -createCredential <cred_name> <REST_username>
+orapki wallet create -wallet <wallet_path>/<REST_SERVER_NAME> -pwd <wallet_pwd> -auto_login
+orapki wallet add -wallet <wallet_path>/<REST_SERVER_NAME> -trusted_cert -cert <cert_file_name> -pwd <wallet_pwd>
+mkstore -wrl <wallet_path>/<REST_SERVER_NAME> -createCredential <REST_SERVER_NAME> <REST_username>
 ```
 > orapki wallet create -wallet /acfs01/wallet/exa01vm02 -pwd We1come4 -auto_login  
 > Oracle PKI Tool Release 18.0.0.0.0 - Production  
@@ -104,7 +104,7 @@ BEGIN
     host => <RHP_server>); 
   DBMS_NETWORK_ACL_ADMIN.ASSIGN_WALLET_acl(
     acl => <name>, 
-    wallet_path =>'file:<wallet_path>'); 
+    wallet_path =>'file:<wallet_path>/<REST_SERVER_NAME>'); 
   commit;
 END; 
 /
